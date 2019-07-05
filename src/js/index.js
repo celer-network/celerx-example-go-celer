@@ -8,7 +8,6 @@ import { randBoolean } from './utils.js'
 import P5 from 'p5'
 import "p5/lib/addons/p5.sound"
 
-import celerx from '../lib/celerx'
 import seed from 'seed-random'
 
 import font from '../assets/Montserrat-Bold.ttf'
