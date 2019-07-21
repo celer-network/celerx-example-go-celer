@@ -57,6 +57,8 @@ new P5(p5 => {
 
   function resetGame () {
 
+    var match = celerx.getMatch();
+    seed(match && match.sharedRandomSeed, { global: true });
     Object.assign(STATE, {
       birds: [],
       cacti: [],
@@ -73,7 +75,7 @@ new P5(p5 => {
 
   function endGame () {
     const padding = 15
-
+    celerx.submitScore(STATE.score)
     p5.fill('#535353')
     p5.textAlign(p5.CENTER)
     p5.textFont(PressStartFont)
