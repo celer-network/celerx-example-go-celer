@@ -6,7 +6,7 @@ import Dino from './actors/Dino.js'
 import { randBoolean } from './utils.js'
 
 import P5 from 'p5'
-import "p5/lib/addons/p5.sound"
+// import "p5/lib/addons/p5.sound"
 
 import celerx from '../lib/celerx.js'
 import seed from 'seed-random'
@@ -56,10 +56,15 @@ new P5(p5 => {
 
   }
 
+  setTimeout(() => {
+    resetGame()
+  }, 1000)
+
   function resetGame () {
 
     var match = celerx.getMatch();
     seed(match && match.sharedRandomSeed, { global: true });
+    celerx.start();
     Object.assign(STATE, {
       birds: [],
       cacti: [],
