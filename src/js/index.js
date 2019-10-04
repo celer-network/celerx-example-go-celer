@@ -6,10 +6,6 @@ import Dino from './actors/Dino.js'
 import { randBoolean } from './utils.js'
 
 import P5 from 'p5'
-// import "p5/lib/addons/p5.sound"
-
-import celerx from '../lib/celerx.js'
-import seed from 'seed-random'
 
 import font from '../assets/Montserrat-Bold.ttf'
 import spriteImg from '../assets/sprite.png'
@@ -61,10 +57,6 @@ new P5(p5 => {
   }, 1000)
 
   function resetGame () {
-
-    var match = celerx.getMatch();
-    seed(match && match.sharedRandomSeed, { global: true });
-    celerx.start();
     Object.assign(STATE, {
       birds: [],
       cacti: [],
@@ -81,7 +73,6 @@ new P5(p5 => {
 
   function endGame () {
     const padding = 15
-    celerx.submitScore(STATE.score)
     p5.fill('#535353')
     p5.textAlign(p5.CENTER)
     p5.textFont(PressStartFont)
