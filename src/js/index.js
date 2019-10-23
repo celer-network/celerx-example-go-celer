@@ -6,7 +6,7 @@ import Dino from './actors/Dino.js'
 import { randBoolean } from './utils.js'
 
 import P5 from 'p5'
-
+import "p5/lib/addons/p5.sound"
 import font from '../assets/Montserrat-Bold.ttf'
 import spriteImg from '../assets/sprite.png'
 import jumpSound from '../assets/jumpsounds.mp3'
