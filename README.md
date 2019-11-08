@@ -1,5 +1,11 @@
 # How to integrate your first game into CelerX
 
+## Notice
+
+`master` branch contains the original game source code
+
+`answer` branch contains the game with celerx-js client 
+
 ## Preparation
 
 ### Step 1: Install NodeJS LTS
@@ -32,12 +38,19 @@ Install a random number seed library
 
 Copy minified SDK code and create a file `celerx.js` in `lib` folder
 
+*update*: CelerX-JS SDK is now available on NPM, you can install it via 
+
+```
+npm install celerx-js
+```
+
 ### Step 6: Add start game logic
 
 A the top of index.js
 
 ```js
-import celerx from "./celerx";
+import celerx from "./celerx"; // import SDK this way if you copied & pasted the SDK code
+import celerx from "celerx"; // import SDK this way if you installed it via 'npm install'
 import seed from "seed-random";
 ```
 
