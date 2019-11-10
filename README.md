@@ -41,7 +41,7 @@ Copy minified SDK code and create a file `celerx.js` in `lib` folder
 *update*: CelerX-JS SDK is now available on NPM, you can install it via 
 
 ```
-npm install celerx-js
+npm install celerxjs
 ```
 
 ### Step 6: Add start game logic
