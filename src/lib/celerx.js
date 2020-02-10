@@ -190,6 +190,16 @@ function base64_decode(input) {
     return output;
 }
 
+var provideScore = {
+    callback: function () {
+        return "";
+    }
+};
+
+bridge.register("provideScore", function () {
+    return provideScore.callback();
+});
+
 module.exports = {
     onStateReceived: function (callback) {
         return bridge.register("onStateReceived", function (base64) {
@@ -238,5 +248,7 @@ module.exports = {
         return bridge.call("ready");
     }, onStart: function (callback) {
         return bridge.register("onStart", callback);
+    }, provideScore: function (callback) {
+        return provideScore = { callback: callback };
     }
 }
