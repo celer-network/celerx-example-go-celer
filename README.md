@@ -54,12 +54,20 @@ import celerx from "celerx"; // import SDK this way if you installed it via 'npm
 import seed from "seed-random";
 ```
 
+Inside the p5 sketch
+
+```js
+celerx.onStart(() => {
+    resetGame();
+});
+celerx.ready();
+```
+
 Inside function `resetGame`
 
 ```js
-var match = celerx.getMatch();
+const match = celerx.getMatch();
 seed(match && match.sharedRandomSeed, { global: true });
-celerx.start();
 ```
 
 ### Step 7: Add end game logic
