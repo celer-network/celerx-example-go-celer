@@ -47,9 +47,8 @@ new P5(p5 => {
   window.state = STATE
 
   celerx.onStart(() => {
-    resetGame(celerx.getMatch())
+    resetGame();
   });
-  
   celerx.ready();
 
   function spriteImage(spriteName, ...clientCoords) {
@@ -60,7 +59,7 @@ new P5(p5 => {
 
   }
 
-  function resetGame(match) {
+  function resetGame() {
     p5.frameCount = 0;
     Object.assign(STATE, {
       birds: [],
@@ -71,6 +70,7 @@ new P5(p5 => {
       level: 0,
       score: 0,
     })
+    const match = celerx.getMatch();
     seed(match && match.sharedRandomSeed, { global: true });
     Object.assign(config.settings, SETTINGS_BACKUP)
     p5.loop()
