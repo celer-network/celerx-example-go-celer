@@ -4,20 +4,22 @@ import Cloud from './actors/Cloud.js'
 import config from './config.js'
 import Dino from './actors/Dino.js'
 import { randBoolean } from './utils.js'
+import seed from 'seed-random'
 
 import P5 from 'p5'
 import "p5/lib/addons/p5.sound"
+
 import font from '../assets/Montserrat-Bold.ttf'
 import spriteImg from '../assets/sprite.png'
 import jumpSound from '../assets/jumpsounds.mp3'
+
+import celerx from '../lib/celerx.js'
 
 // import '../css/style.css'
 // const { p5: P5 } = window
 
 window.p5 = P5
 window.config = config
-
-
 
 // eslint-disable-next-line no-new
 new P5(p5 => {
@@ -34,7 +36,7 @@ new P5(p5 => {
     groundY: 0,
     isRunning: false,
     level: 0,
-    score: 0
+    score: 0,
   }
 
   // eslint-disable-next-line no-unused-vars
@@ -44,7 +46,12 @@ new P5(p5 => {
   window.p5 = p5
   window.state = STATE
 
-  function spriteImage (spriteName, ...clientCoords) {
+  celerx.onStart(() => {
+    resetGame();
+  });
+  celerx.ready();
+
+  function spriteImage(spriteName, ...clientCoords) {
     const { h, w, x, y } = config.sprites[spriteName]
 
     // eslint-disable-next-line no-useless-call
@@ -52,11 +59,8 @@ new P5(p5 => {
 
   }
 
-  setTimeout(() => {
-    resetGame()
-  }, 1000)
-
-  function resetGame () {
+  function resetGame() {
+    p5.frameCount = 0;
     Object.assign(STATE, {
       birds: [],
       cacti: [],
@@ -64,26 +68,34 @@ new P5(p5 => {
       gameOver: false,
       isRunning: true,
       level: 0,
-      score: 0
+      score: 0,
     })
-
+    const match = celerx.getMatch();
+    seed(match && match.sharedRandomSeed, { global: true });
     Object.assign(config.settings, SETTINGS_BACKUP)
     p5.loop()
   }
 
-  function endGame () {
-    const padding = 15
-    p5.fill('#535353')
+  function endGame() {
+    const padding = 12
+    p5.background('rgba(255,255,255,.2)')
+    p5.fill('black')
     p5.textAlign(p5.CENTER)
     p5.textFont(PressStartFont)
-    p5.textSize(12)
-    p5.text('G A M E  O V E R', (p5.width / 2), (p5.height / 2 - p5.textSize() / 2 - padding))
+    p5.textSize(24)
+
+    p5.text('G A M E  O V E R', (p5.width / 2), (p5.height / 2 - p5.textSize() / 2 + padding))
+
+    setTimeout(() => {
+      celerx.submitScore(STATE.score);
+    }, 2000)
 
     STATE.isRunning = false
     p5.noLoop()
   }
 
-  function increaseDifficulty () {
+
+  function increaseDifficulty() {
     const { settings } = config
     const { bgSpeed, cactiSpawnRate, dinoLegsRate } = settings
     const { level } = STATE
@@ -102,7 +114,7 @@ new P5(p5 => {
     }
   }
 
-  function updateScore () {
+  function updateScore() {
     if (p5.frameCount % config.settings.scoreIncreaseRate === 0) {
       const oldLevel = STATE.level
 
@@ -115,7 +127,7 @@ new P5(p5 => {
     }
   }
 
-  function drawGround () {
+  function drawGround() {
     const { bgSpeed } = config.settings
     const groundImgWidth = config.sprites.ground.w / 2
 
@@ -132,7 +144,7 @@ new P5(p5 => {
     }
   }
 
-  function drawClouds () {
+  function drawClouds() {
     const { clouds } = STATE
 
     for (let i = clouds.length - 1; i >= 0; i--) {
@@ -153,7 +165,7 @@ new P5(p5 => {
     }
   }
 
-  function drawDino () {
+  function drawDino() {
     const { dino } = STATE
     // const {dino:dino} = STATE
     if (dino) {
@@ -164,7 +176,7 @@ new P5(p5 => {
     }
   }
 
-  function drawCacti () {
+  function drawCacti() {
     const { cacti } = STATE
 
     for (let i = cacti.length - 1; i >= 0; i--) {
@@ -183,21 +195,21 @@ new P5(p5 => {
     if (p5.frameCount % config.settings.cactiSpawnRate === 0) {
       // randomly either do or don't add cactus
       if (randBoolean()) {
-        cacti.push(new Cactus(p5.width, p5.height))
+        cacti.push(new Cactus(1680, p5.height))
       }
     }
   }
 
-  function drawScore () {
+  function drawScore() {
     p5.fill('#535353')
     p5.textAlign(p5.CENTER)
     p5.textFont(PressStartFont)
     p5.textSize(48)
     //()
-    p5.text((STATE.score + '').padStart(5, '0'), p5.width/2, p5.textSize()+4)
+    p5.text((STATE.score + '').padStart(5, '0'), p5.width / 2, p5.textSize() + 8)
   }
 
-  function drawBirds () {
+  function drawBirds() {
     const { birds } = STATE
 
     for (let i = birds.length - 1; i >= 0; i--) {
@@ -216,58 +228,58 @@ new P5(p5 => {
     if (p5.frameCount % config.settings.birdSpawnRate === 0) {
       // randomly either do or don't add bird
       if (randBoolean()) {
-        birds.push(new Bird(p5.width, p5.height))
+        birds.push(new Bird(1680, p5.height))
       }
     }
   }
 
-  function jumpBtn(){
-    this.x = p5.windowWidth-config.controls.jumpBtnX
-    this.y = p5.windowHeight-config.controls.jumpBtnY
+  function jumpBtn() {
+    this.x = p5.windowWidth - config.controls.jumpBtnX
+    this.y = p5.windowHeight - config.controls.jumpBtnY
     this.r = config.controls.buttonRadius
     this.f = 'rgba(0,0,0,.2)'
 
-    this.display = function(){
-        p5.strokeWeight(2);
-        p5.stroke('#ffff');
-        p5.fill(this.f)
+    this.display = function () {
+      p5.strokeWeight(2);
+      p5.stroke('#ffff');
+      p5.fill(this.f)
 
-        p5.ellipse(this.x, this.y ,this.r , this.r);
-        p5.line(this.x, this.y-14, this.x+15, this.y);
-        p5.line(this.x, this.y-14, this.x-15, this.y);
-        p5.line(this.x, this.y-14, this.x, this.y+14);
-
-    }
-
-    this.tap = function(){
-        this.f = 'rgba(255,255,255,.2)'
-        jumpSoundEffect.play();
-
+      p5.ellipse(this.x, this.y, this.r, this.r);
+      p5.line(this.x, this.y - 14, this.x + 15, this.y);
+      p5.line(this.x, this.y - 14, this.x - 15, this.y);
+      p5.line(this.x, this.y - 14, this.x, this.y + 14);
 
     }
-    this.tapRelease = function(){
+
+    this.tap = function () {
+      this.f = 'rgba(255,255,255,.2)'
+      jumpSoundEffect.play();
+
+
+    }
+    this.tapRelease = function () {
       this.f = 'rgba(0,0,0,.2)'
       jumpSoundEffect.stop();
     }
 
   }
 
-  function crouchBtn(){
+  function crouchBtn() {
 
-    this.x = p5.windowWidth-config.controls.crouchBtnX
-    this.y = p5.windowHeight-config.controls.crouchBtnY
+    this.x = p5.windowWidth - config.controls.crouchBtnX
+    this.y = p5.windowHeight - config.controls.crouchBtnY
     this.r = config.controls.buttonRadius
     this.f = 'rgba(0,0,0,.2)'
 
-    this.display = function(){
-        p5.strokeWeight(2);
-        p5.stroke('#ffff');
-        p5.fill(this.f)
+    this.display = function () {
+      p5.strokeWeight(2);
+      p5.stroke('#ffff');
+      p5.fill(this.f)
 
-        p5.ellipse(this.x, this.y, this.r, this.r);
-        p5.line(this.x, this.y-14, this.x, this.y+14);
-        p5.line(this.x, this.y+14, this.x+15, this.y);
-        p5.line(this.x, this.y+14, this.x-15, this.y);
+      p5.ellipse(this.x, this.y, this.r, this.r);
+      p5.line(this.x, this.y - 14, this.x, this.y + 14);
+      p5.line(this.x, this.y + 14, this.x + 15, this.y);
+      p5.line(this.x, this.y + 14, this.x - 15, this.y);
     }
   }
 
@@ -305,7 +317,7 @@ new P5(p5 => {
   // triggered for every frame
   p5.draw = () => {
 
-    p5.background('#f7f7f7')
+    p5.background('#F4EEE4')
     drawGround()
     drawClouds()
     drawCacti()
@@ -335,41 +347,38 @@ new P5(p5 => {
     //Btn
     p5.touchStarted = () => {
 
-      let d_jumpBtn = p5.dist(p5.mouseX, p5.mouseY,p5.windowWidth-config.controls.jumpBtnX, p5.windowHeight-config.controls.jumpBtnY)
-      let d_crouchBtn = p5.dist(p5.mouseX, p5.mouseY,p5.windowWidth-config.controls.crouchBtnX, p5.windowHeight-config.controls.crouchBtnY)
+      let d_jumpBtn = p5.dist(p5.mouseX, p5.mouseY, p5.windowWidth - config.controls.jumpBtnX, p5.windowHeight - config.controls.jumpBtnY)
+      let d_crouchBtn = p5.dist(p5.mouseX, p5.mouseY, p5.windowWidth - config.controls.crouchBtnX, p5.windowHeight - config.controls.crouchBtnY)
 
-      if(d_jumpBtn<config.controls.buttonRadius){
+      if (d_jumpBtn < config.controls.buttonRadius) {
 
         if (STATE.isRunning) {
           STATE.dino.jump()
           jumpBtn.tap();
           // jumpSoundEffect.play();
 
-        } else {
-          resetGame()
         }
 
+      } else if (d_crouchBtn < config.controls.buttonRadius) {
 
-      }else if(d_crouchBtn < config.controls.buttonRadius){
-
-         if (STATE.isRunning) {
+        if (STATE.isRunning) {
           STATE.dino.duck(true)
+          jumpBtn.tap.call(crouchBtn);
         }
-        jumpBtn.tap.call(crouchBtn);
       }
     }
 
-    p5.touchEnded = () =>{
+    p5.touchEnded = () => {
 
-      let d_crouchBtn = p5.dist(p5.mouseX, p5.mouseY,p5.windowWidth-config.controls.crouchBtnX, p5.windowHeight-config.controls.crouchBtnY)
+      let d_crouchBtn = p5.dist(p5.mouseX, p5.mouseY, p5.windowWidth - config.controls.crouchBtnX, p5.windowHeight - config.controls.crouchBtnY)
 
-      if(d_crouchBtn < config.controls.buttonRadius){
+      if (d_crouchBtn < config.controls.buttonRadius) {
         if (STATE.isRunning) {
-         STATE.dino.duck(false)
-       }
-     }
-     jumpBtn.tapRelease();
-     jumpBtn.tapRelease.call(crouchBtn)
+          STATE.dino.duck(false)
+        }
+      }
+      jumpBtn.tapRelease();
+      jumpBtn.tapRelease.call(crouchBtn)
 
     }
 
@@ -379,14 +388,14 @@ new P5(p5 => {
 
 //disable zooming and out
 document.addEventListener("gesturestart", function (e) {
-	e.preventDefault();
-    document.body.style.zoom = 0.99;
+  e.preventDefault();
+  document.body.style.zoom = 0.99;
 });
 document.addEventListener("gesturechange", function (e) {
-	e.preventDefault();
+  e.preventDefault();
   document.body.style.zoom = 0.99;
 });
 document.addEventListener("gestureend", function (e) {
-	  e.preventDefault();
-    document.body.style.zoom = 1;
+  e.preventDefault();
+  document.body.style.zoom = 1;
 });
