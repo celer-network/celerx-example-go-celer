@@ -1,11 +1,5 @@
 # How to integrate your first game into CelerX
 
-## Notice
-
-`master` branch contains the original game source code
-
-`answer` branch contains the game with celerx-js client 
-
 ## Preparation
 
 ### Step 1: Install NodeJS LTS
